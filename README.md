@@ -9,12 +9,10 @@
 - [Filtros convolucionais para detecção de objetos](#filtros-convolucionais-para-detecção-de-objetos)
   - [Correlação cruzada vs Convolução](#correlação-cruzada-vs-convolução)
   - [Haar Cascade](#haar-cascade)
-- [YoLo](#yolo)
+- [YOLO](#yolo)
   - [Instalação](#instalação)
-  - [Uso](#uso)
-  - [Retreinando os pesos da YoLo](#retreinando-os-pesos-da-yolo)
-  - [Detecção de objetos usando YoLo](#detecção-de-objetos-usando-yolo)
-  - [Segmentação de imagens usando YoLo](#segmentação-de-imagens-usando-yolo)
+  - [Segmentação de imagens usando YOLO](#segmentação-de-imagens-usando-yolo)
+  - [Retreinando os pesos da YOLO](#retreinando-os-pesos-da-yolo)
 
 ## Filtros convolucionais para detecção de objetos
 
@@ -46,7 +44,7 @@ Exemplo de máscaras utilizadas no método Haar Cascade. Imagem retirada da [doc
 
 No entanto, apesar de sua eficácia, a detecção de faces usando Haar Cascades é considerada obsoleta em relação aos métodos modernos de visão computacional. Isso se deve ao surgimento das Redes Neurais Convolucionais (CNNs), que têm uma capacidade muito maior de aprender características discriminativas complexas de imagens. As CNNs podem ser treinadas com um conjunto de dados muito maior e podem aprender a detectar uma variedade muito mais ampla de faces em diferentes condições de iluminação, orientações e expressões faciais. Além disso, as CNNs também são capazes de detectar outros objetos além de faces, tornando-as muito mais versáteis do que os Haar Cascades. Por essas razões, as Redes Neurais Convolucionais se tornaram o padrão ouro para detecção de objetos em visão computacional.
 
-## YoLo
+## YOLO
 
 YOLO, que significa "You Only Look Once" (Você Olha Apenas Uma Vez), é uma popular arquitetura de modelo pré-treinada para detecção de objetos. Ao contrário de outras abordagens de detecção de objetos que processam as imagens várias vezes em diferentes escalas e regiões para identificar objetos, o YOLO faz tudo isso de uma vez, tornando-o extremamente rápido e eficiente. O YOLO reconhece objetos em uma imagem e classifica-os, além de fornecer a localização desses objetos através de "bounding boxes". O modelo foi projetado para ser extremamente rápido e preciso, fazendo dele uma escolha ideal para aplicações em tempo real.
 
@@ -63,10 +61,65 @@ Para criar o YOLO, os pesquisadores primeiro treinam o modelo em um grande conju
 
 ### Instalação
 
-### Uso
+Clone o repositório do YOLO V7 com:
+```bash
+git clone https://github.com/WongKinYiu/yolov7
+```
 
-### Retreinando os pesos da YoLo
+O repositório do YOLO é divido em branches para cada uso do modelo. Como vamos trabalhar com segmentação de imagens, vamos dar `checkout` em um hash específico do repositório:
 
-### Detecção de objetos usando YoLo
+```bash
+git checkout 44f30af0daccb1a3baecc5d80eae22948516c579
+```
 
-### Segmentação de imagens usando YoLo
+A seguir, vamos garantir que todas as dependências do Python estão atendidas. Para isso, navegue até a pasta `seg` dentro da pasta `yolov7`:
+
+```bash
+cd yolov7/seg
+```
+
+Agora rode o pip install com o `requirements.txt` como entrada:
+
+```bash
+pip install -r requirements.txt
+```
+
+Isto pode levar alguns minutos, então tenha paciência =)
+
+### Segmentação de imagens usando YOLO
+
+Para rodar o YOLO para segmentação de imagens, basta rodar o script `predict.py`, que fica dentro da pasta `seg/segment`. Antes disso, no entanto, precisamos baixar os pesos para o modelo da rede neural do YOLO. Para fazer isso, use: 
+
+```bash
+wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-seg.pt
+```
+
+Agora basta rodar o script. Os argumentos que precisaremos passar são `--weights`, que deve ser o nome do nosso arquivo de pesos, `--source`, que deve ser o caminho para nossa imagem e `--name`, que será usado para gerar o nome do arquivo de saída. Vamos rodar o script com nossa imagem `dinho.jpg`. Rode:
+
+```bash
+  python3 segment/predict.py --weights yolov7-seg.pt --source {caminho-ate-imagem} --name teste
+```
+
+Se tudo deu certo, você deve ter visto uma mensagem de que o resultado está salvo em `runs/predict-seg/teste`. Vamos até essa pasta para ver o que está lá:
+
+```bash
+cd ./runs/predict-seg/teste
+```
+
+Note que nessa pasta tem uma imagem `jpg`. Vamos visualizá-la com o programa `fim`. Instale-o com:
+
+```bash
+sudo apt install fim
+```
+
+Agora abra a imagem com:
+```bash
+fim dinho.jpg
+```
+
+Pronto! Rodamos o YOLO pela primeira vez para segmentação de imagem.
+
+### Retreinando os pesos da YOLO
+
+Para retreinar os pesos da YOLO é extremamente recomendável ter uma GPU. Por isso, sugere-se utilizar o Google Colab. Para seguir esta etapa do encontro, entre no Colab e abra o notebook localizado no [seguinte link](https://github.com/roboflow/notebooks/blob/main/notebooks/train-yolov7-instance-segmentation-on-custom-data.ipynb).
+
