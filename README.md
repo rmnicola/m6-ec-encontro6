@@ -11,8 +11,12 @@
   - [Haar Cascade](#haar-cascade)
 - [YOLO](#yolo)
   - [Instalação](#instalação)
-  - [Segmentação de imagens usando YOLO](#segmentação-de-imagens-usando-yolo)
-  - [Retreinando os pesos da YOLO](#retreinando-os-pesos-da-yolo)
+  - [YOLO CLI](#yolo-cli)
+    - [Classificação de imagens com YOLO](#classificação-de-imagens-com-yolo)
+    - [Detecção de objetos com YOLO](#detecção-de-objetos-com-yolo)
+    - [Segmentação semântica com YOLO](#segmentação-semântica-com-yolo)
+  - [(Re)Treinando os pesos da YOLO](#retreinando-os-pesos-da-yolo)
+  - [Interagindo com a YOLO em um script Python](#interagindo-com-a-yolo-em-um-script-python)
 
 ## Filtros convolucionais para detecção de objetos
 
@@ -61,65 +65,56 @@ Para criar o YOLO, os pesquisadores primeiro treinam o modelo em um grande conju
 
 ### Instalação
 
-Clone o repositório do YOLO V7 com:
-```bash
-git clone https://github.com/WongKinYiu/yolov7
-```
-
-O repositório do YOLO é divido em branches para cada uso do modelo. Como vamos trabalhar com segmentação de imagens, vamos dar `checkout` em um hash específico do repositório:
+Para insalar o YOLO V8, basta utilizar o `pip` para instalar o pacote `ultralytics`:
 
 ```bash
-git checkout 44f30af0daccb1a3baecc5d80eae22948516c579
+pip install ultralytics
 ```
 
-A seguir, vamos garantir que todas as dependências do Python estão atendidas. Para isso, navegue até a pasta `seg` dentro da pasta `yolov7`:
+Pronto! Agora você consegue utilizar o YOLO.
+
+### YOLO CLI
+
+A primeira interface do YOLOv8 com a qual teremos contato é a interface de comando de linha. A sintaxe dos comandos é:
 
 ```bash
-cd yolov7/seg
+yolo TAREFA MODO ARGUMENTOS
+
+Onde    TAREFA (opcional) está contida em [detect, segment, classify]
+        MODO (obrigatório) está contido em [train, val, predict, export, track]
+        ARGS (opcional) são quaisquer argumentos do tipo 'arg=valor', como 'imgsz=320' para definir o tamanho das imagens
 ```
 
-Agora rode o pip install com o `requirements.txt` como entrada:
+#### Classificação de imagens com YOLO
+
+Para rodar uma tarefa de classificação, utilize:
 
 ```bash
-pip install -r requirements.txt
+yolo classify predict source=<caminho-ate-imagem>
 ```
 
-Isto pode levar alguns minutos, então tenha paciência =)
+Essa é a tarefa mais simples que o YOLO faz, tanto para treinar como para predizer novo pontos. Note que, na primeira vez que rodar qualquer tarefa de predição com a YOLO, os pesos pré-treinados serão baixados e utilizados automaticamente.
 
-### Segmentação de imagens usando YOLO
+#### Detecção de objetos com YOLO
 
-Para rodar o YOLO para segmentação de imagens, basta rodar o script `predict.py`, que fica dentro da pasta `seg/segment`. Antes disso, no entanto, precisamos baixar os pesos para o modelo da rede neural do YOLO. Para fazer isso, use: 
+Para rodar uma tarefa de detecção, utilize:
 
 ```bash
-wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-seg.pt
+yolo detect predict source=<caminho-ate-imagem>
 ```
 
-Agora basta rodar o script. Os argumentos que precisaremos passar são `--weights`, que deve ser o nome do nosso arquivo de pesos, `--source`, que deve ser o caminho para nossa imagem e `--name`, que será usado para gerar o nome do arquivo de saída. Vamos rodar o script com nossa imagem `dinho.jpg`. Rode:
+#### Segmentação semântica com YOLO
+
+Para rodar uma tarefa de segmentação, utilize:
 
 ```bash
-  python3 segment/predict.py --weights yolov7-seg.pt --source {caminho-ate-imagem} --name teste
+yolo segment predict source=<caminho-ate-imagem>
 ```
 
-Se tudo deu certo, você deve ter visto uma mensagem de que o resultado está salvo em `runs/predict-seg/teste`. Vamos até essa pasta para ver o que está lá:
+### (Re)Treinando os pesos da YOLO
 
-```bash
-cd ./runs/predict-seg/teste
-```
+Com o pacote da ultralytics é muito simples retreinar os pesos da YOLO com um dataset da sua escolha. Para isso, no entanto, sugere-se fortemente o uso de uma GPU (de preferência NVidia). Por enquanto, siga o tutorial disponível [nesse link](https://github.com/roboflow/notebooks/blob/main/notebooks/train-yolov7-instance-segmentation-on-custom-data.ipynb). Note que o tutorial utiliza a YOLOv7, mas é trivial modificar os comandos utilizados para trabalhar com a YOLOv8
 
-Note que nessa pasta tem uma imagem `jpg`. Vamos visualizá-la com o programa `fim`. Instale-o com:
+### Interagindo com a YOLO em um script Python
 
-```bash
-sudo apt install fim
-```
-
-Agora abra a imagem com:
-```bash
-fim dinho.jpg
-```
-
-Pronto! Rodamos o YOLO pela primeira vez para segmentação de imagem.
-
-### Retreinando os pesos da YOLO
-
-Para retreinar os pesos da YOLO é extremamente recomendável ter uma GPU. Por isso, sugere-se utilizar o Google Colab. Para seguir esta etapa do encontro, entre no Colab e abra o notebook localizado no [seguinte link](https://github.com/roboflow/notebooks/blob/main/notebooks/train-yolov7-instance-segmentation-on-custom-data.ipynb).
-
+Seção em construção. Por enquanto, verifique o [guia rápido oficial da ultralytics](https://docs.ultralytics.com/quickstart/#use-with-python)
